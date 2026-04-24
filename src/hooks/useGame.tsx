@@ -86,6 +86,7 @@ const logBoard = () => {
 };
 
 const move = (direction: Direction) => {
+  let moveScore = 0;
   switch (direction) {
     case "left": {
       for (let x = 0; x < BOARD_SIZE; ++x) {
@@ -107,6 +108,7 @@ const move = (direction: Direction) => {
             !doubledCells.includes(prevCell)
           ) {
             prevCell.value = prevCell.value * 2;
+            moveScore += prevCell.value;
             removedCells.push(cell);
             doubledCells.push(prevCell);
           } else {
@@ -138,6 +140,7 @@ const move = (direction: Direction) => {
             !doubledCells.includes(prevCell)
           ) {
             prevCell.value = prevCell.value * 2;
+            moveScore += prevCell.value;
             removedCells.push(cell);
             doubledCells.push(prevCell);
           } else {
@@ -169,6 +172,7 @@ const move = (direction: Direction) => {
             !doubledCells.includes(prevCell)
           ) {
             prevCell.value = prevCell.value * 2;
+            moveScore += prevCell.value;
             removedCells.push(cell);
             doubledCells.push(prevCell);
           } else {
@@ -200,6 +204,7 @@ const move = (direction: Direction) => {
             !doubledCells.includes(prevCell)
           ) {
             prevCell.value = prevCell.value * 2;
+            moveScore += prevCell.value;
             removedCells.push(cell);
             doubledCells.push(prevCell);
           } else {
@@ -213,15 +218,21 @@ const move = (direction: Direction) => {
     }
   }
   spawnCell();
+
+  return moveScore;
 };
 
 export const useGame = () => {
   const forceRender = useForceRender();
   const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
 
   const memoizedMove = useCallback((direction: Direction) => {
     try {
-      move(direction);
+      const moveScore = move(direction);
+      if (moveScore > 0) {
+        setScore((prevScore) => prevScore + moveScore);
+      }
     } catch (err) {
       if (err instanceof BoardFilled) {
         setGameOver(true);
@@ -236,6 +247,7 @@ export const useGame = () => {
   const memoizedStartGame = useCallback(() => {
     startGame();
     setGameOver(false);
+    setScore(0);
   }, []);
 
   return {
@@ -244,5 +256,6 @@ export const useGame = () => {
     startGame: memoizedStartGame,
     logBoard,
     gameOver,
+    score,
   };
 };

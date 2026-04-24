@@ -1,11 +1,5 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  useWindowDimensions,
-  Pressable,
-} from "react-native";
-import React, { useEffect, useMemo } from "react";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
+import React, { useMemo } from "react";
 import {
   BOARD_SIZE,
   BOARD_WIDTH_MULTIPLIER,
@@ -27,7 +21,7 @@ const Board = () => {
       .map((_, index) => <BackgroundCell key={index.toString()} />);
   }, []);
 
-  const { logBoard, board, move, startGame, gameOver } = useGame();
+  const { logBoard, board, move, startGame, gameOver, score } = useGame();
 
   const flingGesture = Gesture.Pan().onEnd((e) => {
     if (gameOver) {
@@ -70,6 +64,10 @@ const Board = () => {
   return (
     <>
       {gameOver && <GameOverScreen onTryAgain={startGame} />}
+      <View style={styles.scoreContainer}>
+        <Text style={styles.scoreLabel}>SCORE</Text>
+        <Text style={styles.scoreValue}>{score}</Text>
+      </View>
       <GestureDetector gesture={flingGesture}>
         <View
           style={[
@@ -90,6 +88,28 @@ const Board = () => {
 };
 
 const styles = StyleSheet.create({
+  scoreContainer: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 4,
+    backgroundColor: theme.textPrimary,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    marginBottom: 12,
+    alignItems: "center",
+  },
+  scoreLabel: {
+    fontFamily: theme.fonts.bold,
+    color: theme.backgroundPrimary,
+    fontSize: 12,
+    opacity: 0.85,
+  },
+  scoreValue: {
+    fontFamily: theme.fonts.bold,
+    color: theme.backgroundPrimary,
+    fontSize: 26,
+    lineHeight: 30,
+  },
   container: {
     backgroundColor: theme.backgroundSecondary,
     marginLeft: "auto",
